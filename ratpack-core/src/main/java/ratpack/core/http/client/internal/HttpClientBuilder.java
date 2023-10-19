@@ -36,6 +36,7 @@ public class HttpClientBuilder implements HttpClientSpec {
   private ByteBufAllocator byteBufAllocator = ByteBufAllocator.DEFAULT;
   private int poolSize;
   private int poolQueueSize = Integer.MAX_VALUE;
+  private long poolAcquireTimeoutMillis = -1L;
   private Duration idleTimeout = Duration.ofSeconds(0);
   private int maxContentLength = ServerConfig.DEFAULT_MAX_CONTENT_LENGTH;
   private int responseMaxChunkSize = 8192;
@@ -83,6 +84,12 @@ public class HttpClientBuilder implements HttpClientSpec {
   @Override
   public HttpClientSpec poolQueueSize(int poolQueueSize) {
     this.poolQueueSize = poolQueueSize;
+    return this;
+  }
+
+  @Override
+  public HttpClientSpec poolAcquireTimeoutMillis(long poolAcquireTimeoutMillis) {
+    this.poolAcquireTimeoutMillis = poolAcquireTimeoutMillis;
     return this;
   }
 
@@ -177,6 +184,7 @@ public class HttpClientBuilder implements HttpClientSpec {
       byteBufAllocator,
       poolSize,
       poolQueueSize,
+      poolAcquireTimeoutMillis,
       idleTimeout,
       maxContentLength,
       responseMaxChunkSize,

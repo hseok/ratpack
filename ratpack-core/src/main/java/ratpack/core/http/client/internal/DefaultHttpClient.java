@@ -47,6 +47,7 @@ public class DefaultHttpClient implements HttpClientInternal {
   final ByteBufAllocator byteBufAllocator;
   final int poolSize;
   final int poolQueueSize;
+  final long poolAcquireTimeoutMillis;
   final Duration idleTimeout;
   final int maxContentLength;
   final int responseMaxChunkSize;
@@ -71,6 +72,7 @@ public class DefaultHttpClient implements HttpClientInternal {
     ByteBufAllocator byteBufAllocator,
     int poolSize,
     int poolQueueSize,
+    long poolAcquireTimeoutMillis,
     Duration idleTimeout,
     int maxContentLength,
     int responseMaxChunkSize,
@@ -86,6 +88,7 @@ public class DefaultHttpClient implements HttpClientInternal {
     this.byteBufAllocator = byteBufAllocator;
     this.poolSize = poolSize;
     this.poolQueueSize = poolQueueSize;
+    this.poolAcquireTimeoutMillis = poolAcquireTimeoutMillis;
     this.idleTimeout = idleTimeout;
     this.maxContentLength = maxContentLength;
     this.responseMaxChunkSize = responseMaxChunkSize;
@@ -112,7 +115,13 @@ public class DefaultHttpClient implements HttpClientInternal {
         if (enableMetricsCollection) {
           hostStats.put(key.host, channelPoolHandler);
         }
-        CleanClosingFixedChannelPool channelPool = new CleanClosingFixedChannelPool(bootstrap, channelPoolHandler, getPoolSize(), getPoolQueueSize());
+        CleanClosingFixedChannelPool channelPool = new CleanClosingFixedChannelPool(
+          bootstrap,
+          channelPoolHandler,
+          getPoolAcquireTimeoutMillis(),
+          getPoolSize(),
+          getPoolQueueSize()
+        );
         key.execController.onClose(() -> {
           remove(key);
           channelPool.closeCleanly();
@@ -179,6 +188,11 @@ public class DefaultHttpClient implements HttpClientInternal {
   @Override
   public int getPoolQueueSize() {
     return poolQueueSize;
+  }
+
+  @Override
+  public long getPoolAcquireTimeoutMillis() {
+    return poolAcquireTimeoutMillis;
   }
 
   @Override

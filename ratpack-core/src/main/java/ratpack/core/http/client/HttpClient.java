@@ -128,6 +128,14 @@ public interface HttpClient extends AutoCloseable {
   int getPoolQueueSize();
 
   /**
+   * The duration in milliseconds, after which a pending acquire must either successfully complete or be timed out.
+   * <p>
+   * The default is -1, indicating no timeout.
+   *
+   */
+  long getPoolAcquireTimeoutMillis();
+
+  /**
    * The idle connect timeout for connections in the connection pool, after which the the offending channel will be closed.
    * <p>
    * If not set, the default is 0, indicating no timeout.

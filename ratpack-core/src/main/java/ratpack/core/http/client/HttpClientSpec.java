@@ -91,6 +91,18 @@ public interface HttpClientSpec {
   HttpClientSpec poolQueueSize(int poolQueueSize);
 
   /**
+   * The duration in milliseconds, after which a pending acquire must either successfully complete or be timed out.
+   * <p>
+   * Defaults to -1
+   * <p>
+   * A value of -1 is interpreted as no timeout.
+   *
+   * @param poolAcquireTimeoutMillis the pool acquire timeout in milliseconds
+   * @return {@code this}
+   */
+  HttpClientSpec poolAcquireTimeoutMillis(long poolAcquireTimeoutMillis);
+
+  /**
    * The default amount of time to allow a connection to remain idle in the connection pool.
    * <p>
    * If the connection is idle for the timeout value, it will be closed.

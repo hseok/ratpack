@@ -18,13 +18,14 @@ package ratpack.core.http.client.internal;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.pool.ChannelHealthChecker;
 import io.netty.channel.pool.ChannelPoolHandler;
 import io.netty.channel.pool.FixedChannelPool;
 
 public class CleanClosingFixedChannelPool extends FixedChannelPool {
 
-  public CleanClosingFixedChannelPool(Bootstrap bootstrap, ChannelPoolHandler handler, int maxConnections, int maxPendingAcquires) {
-    super(bootstrap, handler, maxConnections, maxPendingAcquires);
+  public CleanClosingFixedChannelPool(Bootstrap bootstrap, ChannelPoolHandler handler, long poolAcquireTimeoutMillis, int maxConnections, int maxPendingAcquires) {
+    super(bootstrap, handler, ChannelHealthChecker.ACTIVE, poolAcquireTimeoutMillis == -1L ? null : AcquireTimeoutAction.FAIL, poolAcquireTimeoutMillis, maxConnections, maxPendingAcquires);
   }
 
   public void closeCleanly() {
